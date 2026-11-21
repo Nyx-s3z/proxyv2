@@ -7,10 +7,13 @@ const PORT = process.env.PORT || 8080;
 
 const HOME = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Emnity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+button,input,select{font-family:inherit}
 :root{--gray:#e6e8e8;--gray2:#d4d8d8;--teal:#14b8a6;--teal-d:#0d9488;--black:#0b0b0b;--ink2:#1c1f1f}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--gray);color:var(--black)}
+html,body{margin:0;height:100%;font-family:"Nunito",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--gray);color:var(--black)}
 body{display:flex;flex-direction:column;overflow:hidden}
 #tabbar{background:var(--black);display:flex;align-items:flex-end;gap:2px;padding:6px 8px 0;height:42px;flex:none}
 #brand{color:var(--teal);font-weight:700;letter-spacing:.5px;padding:0 12px 9px 4px;font-size:15px}
@@ -48,7 +51,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 <button id="reload" title="Reload">&#8635;</button><button id="home" title="Home">&#8962;</button>
 <input id="addr" placeholder="Search or enter address" autocomplete="off" spellcheck="false">
 <select id="eng" title="Search engine"><option value="brave">Brave</option><option value="ddg">DuckDuckGo</option>
-<option value="google">Google</option><option value="bing">Bing</option><option value="startpage">Startpage</option></select>
+<option value="google">Google</option><option value="bing">Bing</option><option value="startpage">Startpage</option><option value="mojeek">Mojeek</option></select>
 </div>
 <div id="views">
 <div id="start"><h1>Emn<i>i</i>ty</h1><p>Search or enter an address. Pick your search engine at the top right.</p>
@@ -63,7 +66,7 @@ function norm(v){v=v.trim();if(!v)return"";
  return (ENG[$("eng").value]||ENG.brave)+encodeURIComponent(v);}
 var ENG={brave:"https://search.brave.com/search?q=",ddg:"https://html.duckduckgo.com/html/?q=",
  google:"https://www.google.com/search?q=",bing:"https://www.bing.com/search?q=",
- startpage:"https://www.startpage.com/do/search?q="};
+ startpage:"https://www.startpage.com/do/search?q=",mojeek:"https://www.mojeek.com/search?q="};
 try{var saved=localStorage.getItem("emn_eng");if(saved&&ENG[saved])$("eng").value=saved}catch(e){}
 $("eng").onchange=function(){try{localStorage.setItem("emn_eng",this.value)}catch(e){}};
 function curTab(){for(var i=0;i<tabs.length;i++)if(tabs[i].id==cur)return tabs[i];return null}
