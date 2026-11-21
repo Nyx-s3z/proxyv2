@@ -1,5 +1,7 @@
 // Emnity - minimal tabbed web proxy. Node 18+ (uses built-in fetch). No dependencies.
 const http = require("http");
+require("dns").setDefaultResultOrder("ipv4first");
+try { require("net").setDefaultAutoSelectFamily(true); } catch {}
 const dns = require("dns").promises;
 const net = require("net");
 
@@ -222,3 +224,4 @@ http.createServer(async (req, res) => {
     );
   }
 }).listen(PORT, () => console.log("Emnity running on port " + PORT));
+
