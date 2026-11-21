@@ -28,6 +28,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 #bar button{background:transparent;border:0;color:var(--black);font-size:17px;width:34px;height:34px;border-radius:8px;cursor:pointer}
 #bar button:hover{background:var(--gray2)}
 #addr{flex:1;height:34px;border:2px solid transparent;background:#f4f6f6;border-radius:17px;padding:0 16px;font-size:14px;color:var(--black);outline:none}
+#eng{height:34px;border:2px solid transparent;background:var(--black);color:var(--teal);border-radius:17px;padding:0 10px;font-size:13px;cursor:pointer;outline:none}
 #addr:focus{border-color:var(--teal);background:#fff}
 #views{flex:1;position:relative;background:#fff}
 #views iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
@@ -45,11 +46,13 @@ body{display:flex;flex-direction:column;overflow:hidden}
 <div id="bar">
 <button id="back" title="Back">&#8592;</button><button id="fwd" title="Forward">&#8594;</button>
 <button id="reload" title="Reload">&#8635;</button><button id="home" title="Home">&#8962;</button>
-<input id="addr" placeholder="Search Brave or enter address" autocomplete="off" spellcheck="false">
+<input id="addr" placeholder="Search or enter address" autocomplete="off" spellcheck="false">
+<select id="eng" title="Search engine"><option value="brave">Brave</option><option value="ddg">DuckDuckGo</option>
+<option value="google">Google</option><option value="bing">Bing</option><option value="startpage">Startpage</option></select>
 </div>
 <div id="views">
-<div id="start"><h1>Emn<i>i</i>ty</h1><p>Search privately with Brave, or enter an address.</p>
-<form id="sform"><input id="sq" placeholder="Search Brave or enter address" autocomplete="off"><button>Go</button></form></div>
+<div id="start"><h1>Emn<i>i</i>ty</h1><p>Search or enter an address. Pick your search engine at the top right.</p>
+<form id="sform"><input id="sq" placeholder="Search or enter address" autocomplete="off"><button>Go</button></form></div>
 </div>
 <script>
 var tabs=[],cur=null,n=0;
@@ -57,7 +60,12 @@ function $(id){return document.getElementById(id)}
 function norm(v){v=v.trim();if(!v)return"";
  if(v.indexOf("http://")==0||v.indexOf("https://")==0)return v;
  if(v.indexOf(".")>0&&v.indexOf(" ")<0)return "https://"+v;
- return "https://search.brave.com/search?q="+encodeURIComponent(v);}
+ return (ENG[$("eng").value]||ENG.brave)+encodeURIComponent(v);}
+var ENG={brave:"https://search.brave.com/search?q=",ddg:"https://html.duckduckgo.com/html/?q=",
+ google:"https://www.google.com/search?q=",bing:"https://www.bing.com/search?q=",
+ startpage:"https://www.startpage.com/do/search?q="};
+try{var saved=localStorage.getItem("emn_eng");if(saved&&ENG[saved])$("eng").value=saved}catch(e){}
+$("eng").onchange=function(){try{localStorage.setItem("emn_eng",this.value)}catch(e){}};
 function curTab(){for(var i=0;i<tabs.length;i++)if(tabs[i].id==cur)return tabs[i];return null}
 function newTab(u){var f=document.createElement("iframe");$("views").appendChild(f);
  var t={id:++n,title:"New tab",url:"",frame:f};tabs.push(t);
@@ -157,6 +165,10 @@ http.createServer(async (req, res) => {
         "user-agent": req.headers["user-agent"] || "Mozilla/5.0",
         accept: req.headers.accept || "*/*",
         "accept-language": req.headers["accept-language"] || "en-US,en;q=0.9",
+        "upgrade-insecure-requests": "1",
+        "sec-fetch-site": "none",
+        "sec-fetch-mode": "navigate",
+        "sec-fetch-dest": "document",
         "content-type": req.headers["content-type"] || undefined,
       },
     });
