@@ -129,14 +129,29 @@ function rewriteHtml(html, base) {
       return wrap(new URL(v, base).href);
     } catch { return v; }
   };
-  return html
-    .replace(/\b(href|src|action|poster)=("([^"]*)"|'([^']*)')/gi, (m, attr, q, d, s) => {
+  // Rewrite attributes in markup only; leave the text inside <script> blocks alone.
+  const attrs = (s) => s
+    .replace(/\b(href|src|action|poster)=("([^"]*)"|'([^']*)')/gi, (m, attr, q, d, sq) => {
       const quote = q[0];
-      return `${attr}=${quote}${fix(d ?? s)}${quote}`;
+      return `${attr}=${quote}${fix(d ?? sq)}${quote}`;
     })
-    .replace(/\bsrcset=("[^"]*")/gi, "")
+    .replace(/\bsrcset=("[^"]*"|'[^']*')/gi, "")
+    .replace(/\bintegrity=("[^"]*"|'[^']*')/gi, "")
     .replace(/\btarget=("_blank"|'_blank')/gi, 'target="_self"')
     .replace(/<meta[^>]+http-equiv=["']?content-security-policy["']?[^>]*>/gi, "");
+  const out = html
+    .split(/(<script[\s\S]*?<\/script>)/i)
+    .map((seg, i) => (i % 2 ? seg.replace(/^<script[^>]*>/i, attrs) : attrs(seg)))
+    .join("");
+  // Make fetch() and XMLHttpRequest calls from the page go through the proxy too.
+  const shim = "<script>(function(){var B=" + JSON.stringify(base).replace(/</g, "\\u003c") + ";" +
+    "function w(u){try{u=String(u);if(u.indexOf('/p/')===0)return u;var a=new URL(u,B).href;" +
+    "if(a.indexOf('http')!==0)return u;return '/p/'+encodeURIComponent(a)}catch(e){return u}}" +
+    "var f=window.fetch;window.fetch=function(i,o){if(typeof i==='string'||i instanceof URL)i=w(i);" +
+    "else if(i&&i.url)i=new Request(w(i.url),i);return f.call(this,i,o)};" +
+    "var x=XMLHttpRequest.prototype.open;XMLHttpRequest.prototype.open=function(m,u){" +
+    "arguments[1]=w(u);return x.apply(this,arguments)};})();</script>";
+  return /<head[^>]*>/i.test(out) ? out.replace(/<head[^>]*>/i, (m) => m + shim) : shim + out;
 }
 function rewriteCss(css, base) {
   return css.replace(/url\(\s*(['"]?)([^)'"]+)\1\s*\)/gi, (m, q, v) => {
@@ -224,4 +239,3 @@ http.createServer(async (req, res) => {
     );
   }
 }).listen(PORT, () => console.log("Emnity running on port " + PORT));
-
