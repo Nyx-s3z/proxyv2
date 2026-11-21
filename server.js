@@ -191,6 +191,18 @@ http.createServer(async (req, res) => {
 
     const type = upstream.headers.get("content-type") || "";
     const buf = Buffer.from(await upstream.arrayBuffer());
+    console.log(upstream.status, url.hostname + url.pathname, buf.length + " bytes");
+
+    const wantsPage = (req.headers.accept || "").includes("text/html");
+    if (wantsPage && (buf.length < 300 || (upstream.status >= 400 && !type.includes("text/html")))) {
+      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      return res.end(
+        '<body style="font-family:Nunito,system-ui,sans-serif;background:#e6e8e8;color:#0b0b0b;text-align:center;padding-top:15vh">' +
+        '<h2 style="color:#0d9488">This site sent back nothing usable</h2>' +
+        "<p>" + url.hostname + " answered with status <b>" + upstream.status + "</b> and " + buf.length + " bytes.</p>" +
+        "<p>Status 403 or 429 usually means it blocked the request. Try another search engine.</p></body>"
+      );
+    }
     let out = buf;
     if (type.includes("text/html")) out = Buffer.from(rewriteHtml(buf.toString("utf8"), url.href));
     else if (type.includes("text/css")) out = Buffer.from(rewriteCss(buf.toString("utf8"), url.href));
