@@ -164,6 +164,7 @@ http.createServer(async (req, res) => {
       method: req.method,
       body: ["GET", "HEAD"].includes(req.method) ? undefined : body,
       redirect: "manual",
+      signal: AbortSignal.timeout(15000),
       headers: {
         "user-agent": req.headers["user-agent"] || "Mozilla/5.0",
         accept: req.headers.accept || "*/*",
@@ -210,7 +211,14 @@ http.createServer(async (req, res) => {
     res.writeHead(upstream.status, headers);
     res.end(out);
   } catch (e) {
-    res.writeHead(500, { "content-type": "text/plain" });
-    res.end("Proxy error: " + e.message);
+    const why = (e.cause && (e.cause.code || e.cause.message)) || e.name || "unknown";
+    console.log("ERROR", req.url.slice(0, 80), e.message, why);
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    res.end(
+      '<body style="font-family:Nunito,system-ui,sans-serif;background:#e6e8e8;color:#0b0b0b;text-align:center;padding-top:15vh">' +
+      '<h2 style="color:#0d9488">Couldn\'t reach that site</h2>' +
+      "<p>Reason: <b>" + String(why).replace(/</g, "") + "</b></p>" +
+      "<p>The site likely refused the connection from this server. Try another site or search engine.</p></body>"
+    );
   }
 }).listen(PORT, () => console.log("Emnity running on port " + PORT));
