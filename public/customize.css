@@ -567,3 +567,8 @@ button:hover {
   ) !important;
   background-size: 22px 22px !important;
 }
+/* Make the search cursor visible in every theme */
+#sform input,
+#addr {
+  caret-color: var(--accent-strong) !important;
+}
