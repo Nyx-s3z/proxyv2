@@ -23,6 +23,7 @@
 </head>
 
 <body>
+
 <header id="tabbar">
   <div id="brand">EMNITY</div>
   <div id="tabs" role="tablist"></div>
@@ -34,10 +35,19 @@
   <button id="fwd" title="Forward" aria-label="Forward">&#8594;</button>
   <button id="reload" title="Reload" aria-label="Reload">&#8635;</button>
   <button id="home" title="Home" aria-label="Home">&#8962;</button>
-  <input id="addr" placeholder="Search or enter address" autocomplete="off" spellcheck="false" aria-label="Address bar">
+
+  <input id="addr"
+    placeholder="Search or enter address"
+    autocomplete="off"
+    spellcheck="false"
+    aria-label="Address bar">
+
   <button id="star" title="Bookmark this page" aria-label="Bookmark this page">&#9734;</button>
+
   <select id="eng" title="Search engine" aria-label="Search engine"></select>
+
   <span id="status" class="wait" title="Engine status">starting</span>
+
   <button id="gear" title="Settings" aria-label="Settings">&#9881;</button>
 </nav>
 
@@ -45,14 +55,87 @@
 <div id="load"></div>
 
 <main id="views">
+
   <section id="start">
+
+    <!-- CHRISTMAS DECORATIONS -->
+    <div class="holiday-doodles left-doodles" aria-hidden="true">
+      <svg class="doodle candy" viewBox="0 0 100 190">
+        <path d="M58 174V58C58 15 12 15 12 53"
+          fill="none" stroke="#d9797e" stroke-width="15"
+          stroke-linecap="round"/>
+        <path d="M58 174V58C58 15 12 15 12 53"
+          fill="none" stroke="#fffaf2" stroke-width="5"
+          stroke-linecap="round" stroke-dasharray="12 13"/>
+        <path d="M11 51l-8-10m8 10 11-5"
+          stroke="#648b72" stroke-width="4"
+          stroke-linecap="round"/>
+      </svg>
+
+      <svg class="doodle holly" viewBox="0 0 150 110">
+        <path d="M20 82Q55 38 123 23"
+          fill="none" stroke="#648b72" stroke-width="5"
+          stroke-linecap="round"/>
+        <path d="M48 64Q20 18 8 43Q13 72 48 64ZM80 48Q82 7 112 8Q125 37 80 48ZM95 39Q128 30 137 56Q123 79 95 39Z"
+          fill="#8eb49a" stroke="#527b61"
+          stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="65" cy="72" r="10" fill="#d9797e"/>
+        <circle cx="82" cy="79" r="10" fill="#e89a9b"/>
+        <circle cx="76" cy="61" r="10" fill="#cf666e"/>
+      </svg>
+
+      <svg class="doodle star" viewBox="0 0 100 100">
+        <path d="M50 7L61 37L93 39L68 59L76 91L50 73L24 91L32 59L7 39L39 37Z"
+          fill="#f3cf83" stroke="#d5a94f"
+          stroke-width="4" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="holiday-doodles right-doodles" aria-hidden="true">
+      <svg class="doodle present" viewBox="0 0 130 130">
+        <rect x="18" y="49" width="94" height="68" rx="8"
+          fill="#d9797e" stroke="#b85f68" stroke-width="4"/>
+        <path d="M65 49V117M18 72H112"
+          stroke="#fff4e8" stroke-width="9"/>
+        <path d="M65 48C30 50 26 20 44 19C58 18 65 48 65 48ZM65 48C69 14 104 15 98 34C94 47 65 48 65 48Z"
+          fill="#f3cf83" stroke="#d5a94f" stroke-width="4"/>
+      </svg>
+
+      <svg class="doodle ginger" viewBox="0 0 120 140">
+        <path d="M60 35C45 35 40 47 43 58L27 51Q16 48 13 60Q11 73 26 78L35 73L31 112Q31 125 44 125Q55 125 56 112L60 91L65 112Q67 125 79 125Q92 125 89 111L85 73L94 78Q109 73 106 60Q102 48 91 51L77 58C80 45 73 35 60 35Z"
+          fill="#c58a5b" stroke="#986340"
+          stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="51" cy="61" r="3" fill="#fffaf2"/>
+        <circle cx="70" cy="61" r="3" fill="#fffaf2"/>
+        <path d="M52 75Q60 83 69 75M60 89V105"
+          fill="none" stroke="#fffaf2"
+          stroke-width="4" stroke-linecap="round"/>
+        <circle cx="60" cy="91" r="5" fill="#d9797e"/>
+      </svg>
+
+      <svg class="doodle snow" viewBox="0 0 100 100">
+        <g stroke="#8ebbd0" stroke-width="5" stroke-linecap="round">
+          <path d="M50 8V92M14 29L86 71M14 71L86 29"/>
+          <path d="M50 8l-9 10m9-10 9 10M50 92l-9-10m9 10 9-10M14 29l13 1m-13-1 4 12M86 71l-13-1m13 1-4-12M14 71l13-1m-13 1 4-12M86 29l-13 1m13-1-4 12"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- HOMEPAGE CONTENT -->
     <div class="home-content">
+
       <div class="home-eyebrow">YOUR SPACE ON THE WEB</div>
+
       <h1 id="home-title">Emn<i>i</i>ty</h1>
+
       <p id="home-subtitle">Search or enter an address.</p>
 
       <form id="sform">
-        <input id="sq" placeholder="Search or enter address" autocomplete="off" aria-label="Search">
+        <input
+          id="sq"
+          placeholder="Search or enter address"
+          autocomplete="off"
+          aria-label="Search">
         <button>Go</button>
       </form>
 
@@ -63,18 +146,23 @@
       </div>
 
       <div id="tiles"></div>
+
     </div>
   </section>
 </main>
 
+<!-- SETTINGS -->
 <dialog id="settings">
+
   <div class="settings-shell">
+
     <header class="settings-header">
       <div>
         <div class="settings-eyebrow">EMNITY PREFERENCES</div>
         <h2>Settings</h2>
         <p class="muted">Make Emnity feel like yours.</p>
       </div>
+
       <form method="dialog">
         <button class="settings-close" aria-label="Close settings">×</button>
       </form>
@@ -82,7 +170,9 @@
 
     <div class="settings-content">
 
+      <!-- APPEARANCE -->
       <section class="settings-card">
+
         <div class="settings-card-heading">
           <span class="settings-icon">◐</span>
           <div>
@@ -91,27 +181,41 @@
           </div>
         </div>
 
-        <label class="settings-label" for="theme-select">Colorway</label>
+        <label class="settings-label" for="theme-select">
+          Colorway
+        </label>
+
         <select id="theme-select" class="settings-control">
           <option value="teal">Teal / Steel / Black</option>
           <option value="pastel">Pastel Green / Black / Purple</option>
           <option value="earth">Beige / Brown / Gray</option>
+          <option value="christmas">Christmas</option>
         </select>
 
         <div class="theme-previews">
+
           <div class="theme-preview theme-preview-teal">
             <span></span><span></span><span></span>
           </div>
+
           <div class="theme-preview theme-preview-pastel">
             <span></span><span></span><span></span>
           </div>
+
           <div class="theme-preview theme-preview-earth">
             <span></span><span></span><span></span>
           </div>
+
+          <div class="theme-preview theme-preview-christmas">
+            <span></span><span></span><span></span>
+          </div>
+
         </div>
       </section>
 
+      <!-- HOMEPAGE -->
       <section class="settings-card">
+
         <div class="settings-card-heading">
           <span class="settings-icon">⌂</span>
           <div>
@@ -120,11 +224,25 @@
           </div>
         </div>
 
-        <label class="settings-label" for="home-title-input">Homepage title</label>
-        <input id="home-title-input" class="settings-control" maxlength="32" placeholder="Emnity">
+        <label class="settings-label" for="home-title-input">
+          Homepage title
+        </label>
 
-        <label class="settings-label" for="home-subtitle-input">Subtitle</label>
-        <input id="home-subtitle-input" class="settings-control" maxlength="80" placeholder="Search or enter an address.">
+        <input
+          id="home-title-input"
+          class="settings-control"
+          maxlength="32"
+          placeholder="Emnity">
+
+        <label class="settings-label" for="home-subtitle-input">
+          Subtitle
+        </label>
+
+        <input
+          id="home-subtitle-input"
+          class="settings-control"
+          maxlength="80"
+          placeholder="Search or enter an address.">
 
         <div class="settings-note">
           Add and remove homepage shortcuts using the tiles on your new-tab page.
@@ -135,12 +253,18 @@
           <strong id="set-count">0</strong>
         </div>
 
-        <button type="button" class="settings-secondary" id="reset-links">
+        <button
+          type="button"
+          class="settings-secondary"
+          id="reset-links">
           Restore default shortcuts
         </button>
+
       </section>
 
+      <!-- ACCESS SESSION -->
       <section class="settings-card">
+
         <div class="settings-card-heading">
           <span class="settings-icon">◷</span>
           <div>
@@ -150,16 +274,24 @@
         </div>
 
         <div class="session-panel">
+
           <div class="session-status-line">
             <span class="session-dot"></span>
             <span id="session-state">Checking session...</span>
           </div>
-          <div id="session-remaining" class="session-time">--:--:--</div>
+
+          <div id="session-remaining" class="session-time">
+            --:--:--
+          </div>
+
           <div class="session-caption">TIME REMAINING</div>
+
         </div>
       </section>
 
+      <!-- CONNECTION -->
       <section class="settings-card">
+
         <div class="settings-card-heading">
           <span class="settings-icon">⌁</span>
           <div>
@@ -173,24 +305,37 @@
           <strong id="set-status">starting</strong>
         </div>
 
-        <label class="settings-label" for="set-transport">Connection mode</label>
+        <label class="settings-label" for="set-transport">
+          Connection mode
+        </label>
+
         <select id="set-transport" class="settings-control">
           <option value="epoxy">Epoxy (default)</option>
           <option value="libcurl">libcurl (try if a site fails)</option>
         </select>
+
       </section>
 
     </div>
 
+    <!-- FOOTER -->
     <footer class="settings-footer">
-      <button type="button" class="settings-danger" id="reset-all">
+
+      <button
+        type="button"
+        class="settings-danger"
+        id="reset-all">
         Clear all Emnity data
       </button>
+
       <form method="dialog">
         <button class="settings-done">Done</button>
       </form>
+
     </footer>
+
   </div>
 </dialog>
+
 </body>
 </html>
