@@ -1,21 +1,28 @@
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Emnity</title>
+
 <link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0b0b'/%3E%3Ctext x='32' y='45' font-size='40' font-family='Arial,sans-serif' font-weight='800' text-anchor='middle' fill='%2314b8a6'%3EE%3C/text%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/customize.css">
+
 <script src="/baremux/index.js" defer></script>
 <script src="/uv/uv.bundle.js" defer></script>
 <script src="/uv/uv.config.js" defer></script>
 <script src="/app.js" defer></script>
+<script src="/customize.js" defer></script>
 </head>
-<body>
 
+<body>
 <header id="tabbar">
   <div id="brand">EMNITY</div>
   <div id="tabs" role="tablist"></div>
@@ -39,41 +46,151 @@
 
 <main id="views">
   <section id="start">
-    <h1>Emn<i>i</i>ty</h1>
-    <p>Search or enter an address.</p>
-    <form id="sform">
-      <input id="sq" placeholder="Search or enter address" autocomplete="off" aria-label="Search">
-      <button>Go</button>
-    </form>
-    <div id="banner" hidden>
-      <b id="banner-title"></b>
-      <span id="banner-text"></span>
-      <button id="retry" type="button">Try again</button>
+    <div class="home-content">
+      <div class="home-eyebrow">YOUR SPACE ON THE WEB</div>
+      <h1 id="home-title">Emn<i>i</i>ty</h1>
+      <p id="home-subtitle">Search or enter an address.</p>
+
+      <form id="sform">
+        <input id="sq" placeholder="Search or enter address" autocomplete="off" aria-label="Search">
+        <button>Go</button>
+      </form>
+
+      <div id="banner" hidden>
+        <b id="banner-title"></b>
+        <span id="banner-text"></span>
+        <button id="retry" type="button">Try again</button>
+      </div>
+
+      <div id="tiles"></div>
     </div>
-    <div id="tiles"></div>
   </section>
 </main>
 
 <dialog id="settings">
-  <form method="dialog">
-    <h2>Settings</h2>
-    <p class="muted">Search engine and shortcuts are saved in this browser only.</p>
-    <div class="row"><span>Engine status</span><b id="set-status">starting</b></div>
-    <div class="row">
-      <span>Connection mode</span>
-      <select id="set-transport">
-        <option value="epoxy">Epoxy (default)</option>
-        <option value="libcurl">libcurl (try if a site fails)</option>
-      </select>
-    </div>
-    <div class="row"><span>Shortcuts</span><b id="set-count">0</b></div>
-    <div class="actions">
-      <button type="button" id="reset-links">Restore default shortcuts</button>
-      <button type="button" id="reset-all">Clear all Emnity data</button>
-      <button value="close">Close</button>
-    </div>
-  </form>
-</dialog>
+  <div class="settings-shell">
+    <header class="settings-header">
+      <div>
+        <div class="settings-eyebrow">EMNITY PREFERENCES</div>
+        <h2>Settings</h2>
+        <p class="muted">Make Emnity feel like yours.</p>
+      </div>
+      <form method="dialog">
+        <button class="settings-close" aria-label="Close settings">×</button>
+      </form>
+    </header>
 
+    <div class="settings-content">
+
+      <section class="settings-card">
+        <div class="settings-card-heading">
+          <span class="settings-icon">◐</span>
+          <div>
+            <h3>Appearance</h3>
+            <p>Choose the colors used throughout Emnity.</p>
+          </div>
+        </div>
+
+        <label class="settings-label" for="theme-select">Colorway</label>
+        <select id="theme-select" class="settings-control">
+          <option value="teal">Teal / Steel / Black</option>
+          <option value="pastel">Pastel Green / Black / Purple</option>
+          <option value="earth">Beige / Brown / Gray</option>
+        </select>
+
+        <div class="theme-previews">
+          <div class="theme-preview theme-preview-teal">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="theme-preview theme-preview-pastel">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="theme-preview theme-preview-earth">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card-heading">
+          <span class="settings-icon">⌂</span>
+          <div>
+            <h3>Homepage</h3>
+            <p>Personalize the welcome screen and shortcuts.</p>
+          </div>
+        </div>
+
+        <label class="settings-label" for="home-title-input">Homepage title</label>
+        <input id="home-title-input" class="settings-control" maxlength="32" placeholder="Emnity">
+
+        <label class="settings-label" for="home-subtitle-input">Subtitle</label>
+        <input id="home-subtitle-input" class="settings-control" maxlength="80" placeholder="Search or enter an address.">
+
+        <div class="settings-note">
+          Add and remove homepage shortcuts using the tiles on your new-tab page.
+        </div>
+
+        <div class="settings-row">
+          <span>Saved shortcuts</span>
+          <strong id="set-count">0</strong>
+        </div>
+
+        <button type="button" class="settings-secondary" id="reset-links">
+          Restore default shortcuts
+        </button>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card-heading">
+          <span class="settings-icon">◷</span>
+          <div>
+            <h3>Access session</h3>
+            <p>Your current access-code session.</p>
+          </div>
+        </div>
+
+        <div class="session-panel">
+          <div class="session-status-line">
+            <span class="session-dot"></span>
+            <span id="session-state">Checking session...</span>
+          </div>
+          <div id="session-remaining" class="session-time">--:--:--</div>
+          <div class="session-caption">TIME REMAINING</div>
+        </div>
+      </section>
+
+      <section class="settings-card">
+        <div class="settings-card-heading">
+          <span class="settings-icon">⌁</span>
+          <div>
+            <h3>Connection</h3>
+            <p>Browser engine and connection preferences.</p>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <span>Engine status</span>
+          <strong id="set-status">starting</strong>
+        </div>
+
+        <label class="settings-label" for="set-transport">Connection mode</label>
+        <select id="set-transport" class="settings-control">
+          <option value="epoxy">Epoxy (default)</option>
+          <option value="libcurl">libcurl (try if a site fails)</option>
+        </select>
+      </section>
+
+    </div>
+
+    <footer class="settings-footer">
+      <button type="button" class="settings-danger" id="reset-all">
+        Clear all Emnity data
+      </button>
+      <form method="dialog">
+        <button class="settings-done">Done</button>
+      </form>
+    </footer>
+  </div>
+</dialog>
 </body>
 </html>
