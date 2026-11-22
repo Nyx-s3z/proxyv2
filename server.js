@@ -226,29 +226,29 @@ function loginPage(message) {
 <style>
 *{box-sizing:border-box}
 body{
-margin:0;min-height:100vh;display:flex;flex-direction:column;
-align-items:center;justify-content:center;gap:18px;
-background:#e6e8e8;color:#0b0b0b;
-font-family:"Nunito",system-ui,sans-serif
+ margin:0;min-height:100vh;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:18px;
+ background:#e6e8e8;color:#0b0b0b;
+ font-family:"Nunito",system-ui,sans-serif
 }
 h1{margin:0;font-size:64px;letter-spacing:-1px;font-weight:800}
 h1 i{font-style:normal;color:#14b8a6}
 p{margin:0;color:#4b5454;font-weight:600}
 form{
-display:flex;width:min(380px,90vw);background:#fff;
-border-radius:28px;border:2px solid transparent;
-box-shadow:0 2px 0 #d4d8d8
+ display:flex;width:min(380px,90vw);background:#fff;
+ border-radius:28px;border:2px solid transparent;
+ box-shadow:0 2px 0 #d4d8d8
 }
 form:focus-within{border-color:#14b8a6}
 input{
-flex:1;min-width:0;border:0;outline:0;background:transparent;
-font:inherit;font-size:16px;font-weight:600;
-padding:14px 20px;border-radius:28px 0 0 28px
+ flex:1;min-width:0;border:0;outline:0;background:transparent;
+ font:inherit;font-size:16px;font-weight:600;
+ padding:14px 20px;border-radius:28px 0 0 28px
 }
 button{
-border:0;background:#0b0b0b;color:#14b8a6;
-font:inherit;font-weight:800;padding:0 24px;
-border-radius:0 26px 26px 0;cursor:pointer
+ border:0;background:#0b0b0b;color:#14b8a6;
+ font:inherit;font-weight:800;padding:0 24px;
+ border-radius:0 26px 26px 0;cursor:pointer
 }
 button:hover{background:#0d9488;color:#fff}
 .err{color:#b3261e;min-height:1.2em}
@@ -270,6 +270,12 @@ autocomplete="off" autofocus aria-label="Access code">
 // ---------- ROUTES ----------
 app.get("/healthz", (_req, res) => {
   res.type("text").send("ok");
+});
+
+// The frontend polls this endpoint to detect expired sessions.
+app.get("/session-status", (req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.json({ authenticated: isAuthed(req) });
 });
 
 app.post(
