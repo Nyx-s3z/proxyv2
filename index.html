@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Emnity</title>
+<link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0b0b'/%3E%3Ctext x='32' y='45' font-size='40' font-family='Arial,sans-serif' font-weight='800' text-anchor='middle' fill='%2314b8a6'%3EE%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<script src="/baremux/index.js" defer></script>
+<script src="/uv/uv.bundle.js" defer></script>
+<script src="/uv/uv.config.js" defer></script>
+<script src="/app.js" defer></script>
+</head>
+<body>
+
+<header id="tabbar">
+  <div id="brand">EMNITY</div>
+  <div id="tabs" role="tablist"></div>
+  <button id="plus" title="New tab (Alt+T)" aria-label="New tab">+</button>
+</header>
+
+<nav id="toolbar">
+  <button id="back" title="Back" aria-label="Back">&#8592;</button>
+  <button id="fwd" title="Forward" aria-label="Forward">&#8594;</button>
+  <button id="reload" title="Reload" aria-label="Reload">&#8635;</button>
+  <button id="home" title="Home" aria-label="Home">&#8962;</button>
+  <input id="addr" placeholder="Search or enter address" autocomplete="off" spellcheck="false" aria-label="Address bar">
+  <button id="star" title="Bookmark this page" aria-label="Bookmark this page">&#9734;</button>
+  <select id="eng" title="Search engine" aria-label="Search engine"></select>
+  <span id="status" class="wait" title="Engine status">starting</span>
+  <button id="gear" title="Settings" aria-label="Settings">&#9881;</button>
+</nav>
+
+<div id="bookmarks"></div>
+<div id="load"></div>
+
+<main id="views">
+  <section id="start">
+    <h1>Emn<i>i</i>ty</h1>
+    <p>Search or enter an address.</p>
+    <form id="sform">
+      <input id="sq" placeholder="Search or enter address" autocomplete="off" aria-label="Search">
+      <button>Go</button>
+    </form>
+    <div id="banner" hidden>
+      <b id="banner-title"></b>
+      <span id="banner-text"></span>
+      <button id="retry" type="button">Try again</button>
+    </div>
+    <div id="tiles"></div>
+  </section>
+</main>
+
+<dialog id="settings">
+  <form method="dialog">
+    <h2>Settings</h2>
+    <p class="muted">Search engine and shortcuts are saved in this browser only.</p>
+    <div class="row"><span>Engine status</span><b id="set-status">starting</b></div>
+    <div class="row">
+      <span>Connection mode</span>
+      <select id="set-transport">
+        <option value="epoxy">Epoxy (default)</option>
+        <option value="libcurl">libcurl (try if a site fails)</option>
+      </select>
+    </div>
+    <div class="row"><span>Shortcuts</span><b id="set-count">0</b></div>
+    <div class="actions">
+      <button type="button" id="reset-links">Restore default shortcuts</button>
+      <button type="button" id="reset-all">Clear all Emnity data</button>
+      <button value="close">Close</button>
+    </div>
+  </form>
+</dialog>
+
+</body>
+</html>
