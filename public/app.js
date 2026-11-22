@@ -104,48 +104,17 @@
     $("banner").hidden = false;
   }
 
-  // Wait for the service worker to activate.
-  // Reject if it fails instead of silently continuing after the timeout.
   function waitForActive(worker, ms) {
-    return new Promise((resolveWait, rejectWait) => {
-      if (!worker) {
-        rejectWait(new Error("Service worker registration returned no worker."));
-        return;
-      }
-      if (worker.state === "activated") return resolveWait();
-
-      let finished = false;
-      let timer;
-
-      const finish = (callback, value) => {
-        if (finished) return;
-        finished = true;
-        clearTimeout(timer);
-        worker.removeEventListener("statechange", done);
-        callback(value);
-      };
-
+    return new Promise((resolveWait) => {
+      if (!worker || worker.state === "activated") return resolveWait();
       const done = () => {
         if (worker.state === "activated") {
-          finish(resolveWait);
-        } else if (worker.state === "redundant") {
-          finish(
-            rejectWait,
-            new Error("Service worker became redundant before activation.")
-          );
+          worker.removeEventListener("statechange", done);
+          resolveWait();
         }
       };
-
       worker.addEventListener("statechange", done);
-
-      timer = setTimeout(() => {
-        finish(
-          rejectWait,
-          new Error("Service worker did not activate in time. Reload Emnity and try again.")
-        );
-      }, ms);
-
-      done();
+      setTimeout(resolveWait, ms);
     });
   }
 
@@ -159,27 +128,19 @@
     if (!("serviceWorker" in navigator)) {
       throw new Error("This browser blocks service workers. Use https and a normal (non-private) window.");
     }
-
-    const reg = await navigator.serviceWorker.register("/uv/sw.js", {
-      scope: __uv$config.prefix,
-      updateViaCache: "none",
-    });
-
+    const reg = await navigator.serviceWorker.register("/uv/sw.js", { scope: __uv$config.prefix });
     await waitForActive(reg.installing || reg.waiting || reg.active, 8000);
 
     const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
     const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
     const transportFile = settings.transport === "libcurl" ? "/libcurl/index.mjs" : "/epoxy/index.mjs";
-
     await connection.setTransport(transportFile, [{ wisp: wispUrl }]);
   }
 
   function boot() {
     if (bootPromise) return bootPromise;
-
     setStatus("wait", "starting");
     $("banner").hidden = true;
-
     bootPromise = bootEngine().then(
       () => {
         setStatus("ok", "ready");
@@ -191,56 +152,39 @@
         throw err;
       }
     );
-
     return bootPromise;
   }
 
   // ---------- tabs ----------
   function newTab(raw) {
     if (tabs.length >= MAX_TABS) return curTab();
-
     const frame = document.createElement("iframe");
     frame.setAttribute("allow", "autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture; web-share");
     frame.setAttribute("allowfullscreen", "");
     frame.title = "Page";
-
-    const tab = {
-      id: ++seq,
-      url: "",
-      title: "New tab",
-      icon: "",
-      badIcon: "",
-      loading: false,
-      frame
-    };
-
+    const tab = { id: ++seq, url: "", title: "New tab", icon: "", badIcon: "", loading: false, frame };
     frame.addEventListener("load", () => {
       sync(tab);
       tab.loading = false;
       render();
     });
-
     $("views").appendChild(frame);
     tabs.push(tab);
     cur = tab.id;
     render();
-
     if (raw) go(tab, raw);
     return tab;
   }
 
   async function go(tab, raw) {
     if (!tab) tab = newTab();
-
     const url = resolve(raw);
     if (!url) return;
-
     try {
       await boot();
     } catch {
       return;
     }
-
     tab.url = url;
     tab.title = hostOf(url);
     tab.loading = true;
@@ -254,49 +198,40 @@
     try {
       const link = w.document && w.document.querySelector('link[rel~="icon"]');
       const raw = link && link.href;
-
       if (raw) {
         if (raw.startsWith("data:")) return raw;
         if (raw.startsWith(location.origin + __uv$config.prefix)) return raw;
         if (/^https?:\/\//i.test(raw)) return __uv$config.prefix + __uv$config.encodeUrl(raw);
       }
-
       if (pageUrl) {
         return __uv$config.prefix + __uv$config.encodeUrl(new URL("/favicon.ico", pageUrl).href);
       }
     } catch {
       /* page not ready */
     }
-
     return "";
   }
 
   // Read the real address and title back out of the proxied page.
   function sync(tab) {
     let changed = false;
-
     try {
       const w = tab.frame.contentWindow;
       const base = location.origin + __uv$config.prefix;
       const href = w.location.href;
-
       if (href.indexOf(base) === 0) {
         const real = __uv$config.decodeUrl(href.slice(base.length));
         const title = (w.document && w.document.title) || hostOf(real);
-
         if (real && real !== tab.url) {
           tab.url = real;
           changed = true;
         }
-
         if (title !== tab.title) {
           tab.title = title;
           changed = true;
         }
-
         let icon = findIcon(w, tab.url);
         if (icon && icon === tab.badIcon) icon = "";
-
         if (icon !== tab.icon) {
           tab.icon = icon;
           changed = true;
@@ -305,7 +240,6 @@
     } catch {
       /* cross-origin or not ready */
     }
-
     return changed;
   }
 
@@ -317,22 +251,18 @@
   function closeTab(id) {
     const i = tabs.findIndex((t) => t.id === id);
     if (i < 0) return;
-
     tabs[i].frame.remove();
     tabs.splice(i, 1);
-
     if (!tabs.length) {
       newTab();
       return;
     }
-
     if (cur === id) cur = tabs[Math.max(0, i - 1)].id;
     render();
   }
 
   function goHome(tab) {
     if (!tab) return;
-
     tab.url = "";
     tab.title = "New tab";
     tab.icon = "";
@@ -345,20 +275,16 @@
   function render() {
     const strip = $("tabs");
     strip.textContent = "";
-
     for (const t of tabs) {
       const el = document.createElement("div");
       el.className = "tab" + (t.id === cur ? " on" : "");
       el.setAttribute("role", "tab");
-
       let lead;
-
       if (t.url && t.icon && !t.loading) {
         lead = document.createElement("img");
         lead.className = "fav";
         lead.alt = "";
         lead.src = t.icon;
-
         lead.addEventListener("error", () => {
           t.badIcon = t.icon;
           t.icon = "";
@@ -368,81 +294,57 @@
         lead = document.createElement("i");
         lead.className = "dot" + (t.loading ? " spin" : "");
       }
-
       const label = document.createElement("span");
       label.textContent = t.url ? t.title : "New tab";
-
       const x = document.createElement("b");
       x.textContent = "×";
       x.title = "Close tab";
-
       x.addEventListener("click", (e) => {
         e.stopPropagation();
         closeTab(t.id);
       });
-
       el.addEventListener("click", () => select(t.id));
-
       el.addEventListener("auxclick", (e) => {
         if (e.button === 1) closeTab(t.id);
       });
-
       el.append(lead, label, x);
       strip.append(el);
-
       t.frame.style.display = t.id === cur && t.url ? "block" : "none";
     }
-
     const c = curTab();
-
     $("start").style.display = c && !c.url ? "flex" : "none";
-
-    if (document.activeElement !== $("addr")) {
-      $("addr").value = c && c.url ? c.url : "";
-    }
-
+    if (document.activeElement !== $("addr")) $("addr").value = c && c.url ? c.url : "";
     $("load").className = c && c.loading ? "on" : "";
     $("star").classList.toggle("on", !!(c && c.url && links.some((l) => l.url === c.url)));
     $("star").textContent = c && c.url && links.some((l) => l.url === c.url) ? "★" : "☆";
-
     document.title = c && c.url ? c.title + " - Emnity" : "Emnity";
-
     // Mirror the current page's icon onto the real browser tab.
     const fav = $("favicon");
     const want = c && c.url && c.icon && !c.loading ? c.icon : DEFAULT_ICON;
-
-    if (fav.getAttribute("href") !== want) {
-      fav.setAttribute("href", want);
-    }
+    if (fav.getAttribute("href") !== want) fav.setAttribute("href", want);
   }
 
   function renderLinks() {
     const bar = $("bookmarks");
     bar.textContent = "";
     bar.style.display = links.length ? "flex" : "none";
-
     for (const l of links) {
       const chip = document.createElement("button");
       chip.className = "chip";
       chip.title = l.url;
-
       const letter = document.createElement("span");
       letter.className = "l";
       letter.textContent = (l.title || "?").charAt(0).toUpperCase();
-
       const name = document.createElement("span");
       name.textContent = l.title;
-
       const x = document.createElement("span");
       x.className = "x";
       x.textContent = "×";
       x.title = "Remove";
-
       x.addEventListener("click", (e) => {
         e.stopPropagation();
         removeLink(l.url);
       });
-
       chip.addEventListener("click", () => go(curTab(), l.url));
       chip.append(letter, name, x);
       bar.append(chip);
@@ -450,46 +352,34 @@
 
     const tiles = $("tiles");
     tiles.textContent = "";
-
     for (const l of links) {
       const tile = document.createElement("button");
       tile.className = "tile";
-
       const ic = document.createElement("div");
       ic.className = "ic";
       ic.textContent = (l.title || "?").charAt(0).toUpperCase();
-
       const t = document.createElement("span");
       t.className = "t";
       t.textContent = l.title;
-
       tile.append(ic, t);
       tile.addEventListener("click", () => go(curTab(), l.url));
       tiles.append(tile);
     }
-
     const add = document.createElement("button");
     add.className = "tile add";
-
     const aic = document.createElement("div");
     aic.className = "ic";
     aic.textContent = "+";
-
     const at = document.createElement("span");
     at.className = "t";
     at.textContent = "Add shortcut";
-
     add.append(aic, at);
-
     add.addEventListener("click", () => {
       const raw = prompt("Website address (for example example.com)");
       const url = raw ? resolve(raw) : "";
-
       if (!url || /\s/.test(raw.trim())) return;
-
       addLink(hostOf(url), url);
     });
-
     tiles.append(add);
     $("set-count").textContent = String(links.length);
   }
@@ -514,16 +404,13 @@
   // ---------- wiring ----------
   function fillEngines() {
     const sel = $("eng");
-
     for (const [key, e] of Object.entries(ENGINES)) {
       const o = document.createElement("option");
       o.value = key;
       o.textContent = e.name;
       sel.append(o);
     }
-
     sel.value = settings.engine;
-
     sel.addEventListener("change", () => {
       settings.engine = sel.value;
       store.set("emn_settings", settings);
@@ -538,7 +425,6 @@
       e.target.blur();
     }
   });
-
   $("addr").addEventListener("focus", (e) => e.target.select());
 
   $("sform").addEventListener("submit", (e) => {
@@ -555,7 +441,6 @@
       /* ignore */
     }
   });
-
   $("fwd").addEventListener("click", () => {
     try {
       curTab().frame.contentWindow.history.forward();
@@ -563,83 +448,40 @@
       /* ignore */
     }
   });
-
   $("reload").addEventListener("click", () => {
     const t = curTab();
     if (!t || !t.url) return;
-
     t.loading = true;
     render();
-
     try {
       t.frame.contentWindow.location.reload();
     } catch {
       go(t, t.url);
     }
   });
-
   $("home").addEventListener("click", () => goHome(curTab()));
 
   $("star").addEventListener("click", () => {
     const t = curTab();
     if (!t || !t.url) return;
-
-    if (links.some((l) => l.url === t.url)) {
-      removeLink(t.url);
-    } else {
-      addLink(t.title && t.title !== t.url ? t.title.slice(0, 24) : hostOf(t.url), t.url);
-    }
+    if (links.some((l) => l.url === t.url)) removeLink(t.url);
+    else addLink(t.title && t.title !== t.url ? t.title.slice(0, 24) : hostOf(t.url), t.url);
   });
 
   $("retry").addEventListener("click", () => boot().catch(() => {}));
 
   $("set-transport").value = settings.transport;
-
   $("set-transport").addEventListener("change", () => {
     settings.transport = $("set-transport").value;
     store.set("emn_settings", settings);
     location.reload();
   });
 
-  // Open a separate about:blank tab and display the Emnity app inside it.
-  // This must run directly from a click so popup blockers allow the new tab.
-  $("blank").addEventListener("click", () => {
-    const blankWindow = window.open("about:blank", "_blank");
-
-    if (!blankWindow) {
-      showBanner("Pop-up blocked.", "Allow pop-ups for this site, then try opening the about:blank tab again.");
-      return;
-    }
-
-    try {
-      blankWindow.opener = null;
-
-      const doc = blankWindow.document;
-      doc.title = "Emnity";
-      doc.documentElement.style.cssText = "height:100%;margin:0";
-      doc.body.style.cssText = "height:100%;margin:0;overflow:hidden;background:#fff";
-
-      const frame = doc.createElement("iframe");
-      frame.title = "Emnity";
-      frame.src = window.location.href;
-      frame.style.cssText = "position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff";
-      frame.setAttribute("allow", "autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture; web-share");
-      frame.setAttribute("allowfullscreen", "");
-
-      doc.body.replaceChildren(frame);
-    } catch (err) {
-      blankWindow.close();
-      showBanner("Couldn't open the blank tab.", "Your browser prevented Emnity from setting up the new tab. Try allowing pop-ups for this site.");
-    }
-  });
-
   $("gear").addEventListener("click", () => $("settings").showModal());
-
   $("reset-links").addEventListener("click", () => {
     links = DEFAULT_LINKS.map((l) => ({ ...l }));
     saveLinks();
   });
-
   $("reset-all").addEventListener("click", () => {
     if (!confirm("Clear your shortcuts and settings?")) return;
     store.clear();
@@ -648,9 +490,7 @@
 
   document.addEventListener("keydown", (e) => {
     if (!e.altKey) return;
-
     const k = e.key.toLowerCase();
-
     if (k === "t") {
       e.preventDefault();
       newTab();
@@ -666,11 +506,7 @@
   // Keep tab titles and addresses fresh for pages that change them without reloading.
   setInterval(() => {
     let changed = false;
-
-    for (const t of tabs) {
-      if (t.url && sync(t)) changed = true;
-    }
-
+    for (const t of tabs) if (t.url && sync(t)) changed = true;
     if (changed) render();
   }, 1500);
 
@@ -680,3 +516,4 @@
   newTab();
   boot().catch(() => {});
 })();
+
