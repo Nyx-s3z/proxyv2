@@ -10,11 +10,26 @@
     homeSubtitle: "Search or enter an address."
   };
 
+  const VALID_THEMES = [
+    "teal",
+    "pastel",
+    "earth",
+    "christmas"
+  ];
+
+  // ==========================================
+  // SETTINGS STORAGE
+  // ==========================================
+
   function readSettings() {
     try {
+      const stored = JSON.parse(
+        localStorage.getItem("emn_settings") || "{}"
+      );
+
       return {
         ...DEFAULTS,
-        ...JSON.parse(localStorage.getItem("emn_settings") || "{}")
+        ...stored
       };
     } catch {
       return { ...DEFAULTS };
@@ -23,61 +38,90 @@
 
   function saveSetting(key, value) {
     const current = readSettings();
+
     current[key] = value;
 
     try {
-      localStorage.setItem("emn_settings", JSON.stringify(current));
+      localStorage.setItem(
+        "emn_settings",
+        JSON.stringify(current)
+      );
     } catch {
       // Storage may be unavailable.
     }
   }
 
+  // ==========================================
+  // APPLY SETTINGS
+  // ==========================================
+
   function applySettings() {
     const settings = readSettings();
 
-    document.documentElement.dataset.theme =
-      ["teal", "pastel", "earth"].includes(settings.theme)
-        ? settings.theme
-        : "teal";
+    const theme = VALID_THEMES.includes(settings.theme)
+      ? settings.theme
+      : DEFAULTS.theme;
+
+    document.documentElement.dataset.theme = theme;
 
     const title = $("home-title");
     const subtitle = $("home-subtitle");
 
     if (title) {
-      title.textContent = settings.homeTitle || DEFAULTS.homeTitle;
+      title.textContent =
+        settings.homeTitle || DEFAULTS.homeTitle;
     }
 
     if (subtitle) {
-      subtitle.textContent = settings.homeSubtitle || DEFAULTS.homeSubtitle;
+      subtitle.textContent =
+        settings.homeSubtitle || DEFAULTS.homeSubtitle;
     }
 
     const themeSelect = $("theme-select");
     const titleInput = $("home-title-input");
     const subtitleInput = $("home-subtitle-input");
 
-    if (themeSelect) themeSelect.value = settings.theme;
-    if (titleInput) titleInput.value = settings.homeTitle;
-    if (subtitleInput) subtitleInput.value = settings.homeSubtitle;
+    if (themeSelect) {
+      themeSelect.value = theme;
+    }
+
+    if (titleInput) {
+      titleInput.value = settings.homeTitle;
+    }
+
+    if (subtitleInput) {
+      subtitleInput.value = settings.homeSubtitle;
+    }
   }
 
-  // ---------- THEME ----------
+  // ==========================================
+  // THEME SELECTOR
+  // ==========================================
+
   $("theme-select")?.addEventListener("change", (event) => {
     const theme = event.target.value;
 
-    if (!["teal", "pastel", "earth"].includes(theme)) return;
+    if (!VALID_THEMES.includes(theme)) {
+      return;
+    }
 
     saveSetting("theme", theme);
     applySettings();
   });
 
-  // ---------- HOMEPAGE CUSTOMIZATION ----------
+  // ==========================================
+  // HOMEPAGE CUSTOMIZATION
+  // ==========================================
+
   $("home-title-input")?.addEventListener("input", (event) => {
     const value = event.target.value.slice(0, 32);
 
     saveSetting("homeTitle", value);
 
-    if ($("home-title")) {
-      $("home-title").textContent = value || DEFAULTS.homeTitle;
+    const title = $("home-title");
+
+    if (title) {
+      title.textContent = value || DEFAULTS.homeTitle;
     }
   });
 
@@ -86,26 +130,39 @@
 
     saveSetting("homeSubtitle", value);
 
-    if ($("home-subtitle")) {
-      $("home-subtitle").textContent = value || DEFAULTS.homeSubtitle;
+    const subtitle = $("home-subtitle");
+
+    if (subtitle) {
+      subtitle.textContent =
+        value || DEFAULTS.homeSubtitle;
     }
   });
 
-  // ---------- SESSION TIMER ----------
+  // ==========================================
+  // SESSION TIMER
+  // ==========================================
+
   let expiresAt = null;
   let previouslyAuthenticated = false;
   let expirationHandled = false;
   let checking = false;
 
-  function formatTime(ms) {
-    const total = Math.max(0, Math.floor(ms / 1000));
+  function formatTime(milliseconds) {
+    const total = Math.max(
+      0,
+      Math.floor(milliseconds / 1000)
+    );
 
     const hours = Math.floor(total / 3600);
     const minutes = Math.floor((total % 3600) / 60);
     const seconds = total % 60;
 
-    return [hours, minutes, seconds]
-      .map((number) => String(number).padStart(2, "0"))
+    return [
+      hours,
+      minutes,
+      seconds
+    ]
+      .map(number => String(number).padStart(2, "0"))
       .join(":");
   }
 
@@ -113,7 +170,9 @@
     const timer = $("session-remaining");
     const state = $("session-state");
 
-    if (!timer || !state) return;
+    if (!timer || !state) {
+      return;
+    }
 
     if (!expiresAt) {
       timer.textContent = "--:--:--";
@@ -133,7 +192,9 @@
   }
 
   async function checkSession() {
-    if (checking || expirationHandled) return;
+    if (checking || expirationHandled) {
+      return;
+    }
 
     checking = true;
 
@@ -143,14 +204,21 @@
         credentials: "same-origin"
       });
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        return;
+      }
 
       const data = await response.json();
 
-      if (data.authenticated && Number.isFinite(data.expiresAt)) {
+      if (
+        data.authenticated &&
+        Number.isFinite(data.expiresAt)
+      ) {
         previouslyAuthenticated = true;
         expiresAt = data.expiresAt;
+
         updateTimerDisplay();
+
         return;
       }
 
@@ -160,34 +228,64 @@
         const timer = $("session-remaining");
         const state = $("session-state");
 
-        if (timer) timer.textContent = "00:00:00";
-        if (state) state.textContent = "Session expired";
+        if (timer) {
+          timer.textContent = "00:00:00";
+        }
 
-        alert("Your access session timer has run out.");
+        if (state) {
+          state.textContent = "Session expired";
+        }
+
+        alert(
+          "Your access session timer has run out."
+        );
 
         window.location.replace("/");
-      } else {
-        const timer = $("session-remaining");
-        const state = $("session-state");
 
-        if (timer) timer.textContent = "--:--:--";
-        if (state) state.textContent = "Session unavailable";
+        return;
       }
-    } catch {
-      // Keep the displayed timer during temporary network issues.
+
+      const timer = $("session-remaining");
+      const state = $("session-state");
+
+      if (timer) {
+        timer.textContent = "--:--:--";
+      }
+
+      if (state) {
+        state.textContent = "Session unavailable";
+      }
+
+    } catch (error) {
+      // Keep the last displayed timer during
+      // temporary network interruptions.
     } finally {
       checking = false;
     }
   }
 
-  // ---------- START ----------
+  // ==========================================
+  // INITIALIZATION
+  // ==========================================
+
   applySettings();
+
   checkSession();
 
+  // Update the countdown every second.
   setInterval(updateTimerDisplay, 1000);
+
+  // Check the server every five seconds.
   setInterval(checkSession, 5000);
 
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) checkSession();
-  });
+  // Refresh session status when returning to the tab.
+  document.addEventListener(
+    "visibilitychange",
+    () => {
+      if (!document.hidden) {
+        checkSession();
+      }
+    }
+  );
+
 })();
