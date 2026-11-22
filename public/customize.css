@@ -572,3 +572,199 @@ button:hover {
 #addr {
   caret-color: var(--accent-strong) !important;
 }
+
+/* ==========================================
+   CHRISTMAS THEME
+========================================== */
+
+:root[data-theme="christmas"] {
+  color-scheme: light;
+
+  --page: #fffaf2;
+  --surface: #fffefd;
+  --surface-alt: #f5ecdf;
+  --text: #514747;
+  --muted: #887b75;
+  --accent: #648b72;
+  --accent-strong: #b85f68;
+  --line: #e8dcd0;
+  --dark: #42664f;
+  --shadow: 0 12px 40px rgba(70, 50, 40, .12);
+}
+
+/* Browser header */
+:root[data-theme="christmas"] #tabbar {
+  background: #42664f !important;
+  border-bottom: 3px solid #d9797e !important;
+}
+
+:root[data-theme="christmas"] #brand {
+  color: #fffaf2 !important;
+}
+
+:root[data-theme="christmas"] .tab {
+  background: #52735d;
+  color: #e5eee5;
+}
+
+:root[data-theme="christmas"] .tab.on {
+  background: #fffaf2;
+  color: #514747;
+  border-top-color: #d9797e;
+}
+
+:root[data-theme="christmas"] #plus {
+  color: #fffaf2;
+}
+
+/* Homepage */
+:root[data-theme="christmas"] #views,
+:root[data-theme="christmas"] #start {
+  background-color: #fffaf2 !important;
+}
+
+:root[data-theme="christmas"] #start {
+  background-image: radial-gradient(
+    #eadfd2 1px,
+    transparent 1px
+  ) !important;
+  background-size: 22px 22px !important;
+}
+
+:root[data-theme="christmas"] #home-title {
+  color: #42664f;
+}
+
+:root[data-theme="christmas"] #home-title i {
+  color: #d9797e;
+}
+
+:root[data-theme="christmas"] .home-eyebrow {
+  color: #648b72;
+}
+
+:root[data-theme="christmas"] #home-subtitle {
+  color: #887b75;
+}
+
+/* Search bar */
+:root[data-theme="christmas"] #sform {
+  background: #fffefd;
+  border-color: #eadfd2;
+  box-shadow: 0 4px 0 #e8dcd0;
+}
+
+:root[data-theme="christmas"] #sform:focus-within {
+  border-color: #648b72;
+  box-shadow: 0 4px 0 #cbdccf;
+}
+
+:root[data-theme="christmas"] #sform button {
+  background: #d9797e;
+  color: white;
+}
+
+:root[data-theme="christmas"] #sform button:hover {
+  background: #b85f68;
+}
+
+/* Shortcut icons */
+:root[data-theme="christmas"] #tiles .ic {
+  background: #dce9dc !important;
+  color: #42664f !important;
+  border-color: #c6d8c7;
+  box-shadow: 0 3px 0 #d5e2d4;
+}
+
+:root[data-theme="christmas"] #tiles .tile:hover .ic {
+  background: #d9797e !important;
+  color: white !important;
+  border-color: #b85f68;
+}
+
+:root[data-theme="christmas"] #tiles .tile {
+  background: transparent !important;
+  color: #514747;
+}
+
+/* Christmas decorations */
+:root[data-theme="christmas"] .holiday-doodles {
+  display: block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 160px;
+  height: 400px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+:root[data-theme="christmas"] .left-doodles {
+  left: 4%;
+}
+
+:root[data-theme="christmas"] .right-doodles {
+  right: 4%;
+}
+
+:root[data-theme="christmas"] .holiday-doodles span {
+  position: absolute;
+  font-size: 65px;
+}
+
+.holiday-candy { top: 5%; left: 15%; transform: rotate(-20deg); }
+.holiday-holly { top: 39%; left: 0; }
+.holiday-star { bottom: 0; left: 25%; }
+.holiday-present { top: 5%; right: 0; }
+.holiday-ginger { top: 39%; right: 0; }
+.holiday-snow { bottom: 0; right: 15%; }
+
+/* Toolbar */
+:root[data-theme="christmas"] #toolbar button {
+  color: #42664f;
+}
+
+:root[data-theme="christmas"] #eng {
+  background: #d9797e;
+  color: white;
+}
+
+:root[data-theme="christmas"] #addr {
+  border-color: #e8dcd0;
+  background: #fffefd;
+  color: #514747;
+}
+
+:root[data-theme="christmas"] #load {
+  background: #648b72;
+}
+
+/* Settings */
+:root[data-theme="christmas"] #settings {
+  background: #fffaf2;
+  color: #514747;
+}
+
+:root[data-theme="christmas"] .settings-done {
+  background: #42664f;
+  color: #fffaf2;
+}
+
+:root[data-theme="christmas"] .settings-icon {
+  color: #b85f68;
+}
+
+/* Smaller screens */
+@media (max-width: 900px) {
+  :root[data-theme="christmas"] .holiday-doodles {
+    opacity: .4;
+    width: 100px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root[data-theme="christmas"] .holiday-doodles {
+    opacity: .18;
+    width: 65px;
+  }
+}
