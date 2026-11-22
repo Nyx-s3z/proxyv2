@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
 :root {
@@ -73,9 +74,16 @@ button, input, select { font-family: inherit; }
 }
 #addr:focus { border-color: var(--green); background: white; }
 #eng {
-  height: 36px; border: 0; background: var(--red); color: white;
-  border-radius: 18px; padding: 0 13px; font-size: 13px; font-weight: 900;
-  cursor: pointer; outline: none;
+  height: 36px;
+  border: 0;
+  background: var(--red);
+  color: white;
+  border-radius: 18px;
+  padding: 0 17px 0 13px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  outline: none;
 }
 #eng:hover { background: var(--red-dark); }
 #status { font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 12px; background: var(--cream-deep); color: var(--muted); flex: none; }
@@ -137,7 +145,6 @@ button, input, select { font-family: inherit; }
 
 /* Simple hand-drawn side decorations */
 .holiday-doodles { display: none; }
-
 
 dialog { border: 2px solid var(--line); border-radius: 18px; padding: 22px 24px; background: var(--cream); color: var(--ink); width: min(420px, 92vw); box-shadow: 0 18px 60px #30231f30; }
 dialog::backdrop { background: rgba(48, 62, 50, .48); }
