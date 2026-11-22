@@ -529,3 +529,41 @@ button:hover {
     align-items: stretch;
   }
 }
+
+/* Remove the background behind homepage shortcuts */
+#tiles .tile {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#tiles .tile:hover {
+  background: transparent !important;
+}
+
+/* Darker cyberpunk theme */
+:root[data-theme="pastel"] {
+  --page: #191a20;
+  --surface: #22242c;
+  --surface-alt: #2b2e38;
+  --text: #f1f2f5;
+  --muted: #aeb2bf;
+  --accent: #b9edc4;
+  --accent-strong: #b99be8;
+  --line: #3b3e49;
+  --dark: #101116;
+}
+
+/* Apply the dark color to the actual homepage */
+:root[data-theme="pastel"] #views,
+:root[data-theme="pastel"] #start {
+  background-color: var(--page) !important;
+}
+
+:root[data-theme="pastel"] #start {
+  background-image: radial-gradient(
+    rgba(185, 237, 196, .13) 1px,
+    transparent 1px
+  ) !important;
+  background-size: 22px 22px !important;
+}
