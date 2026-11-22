@@ -181,6 +181,25 @@ function isAuthed(req) {
   }
 }
 
+// Read the expiration time only after verifying the signed session.
+function getSessionExpiry(req) {
+  if (!isAuthed(req)) return null;
+
+  const value = readCookie(req, "emn_auth");
+  const dot = value.lastIndexOf(".");
+  const payload = value.slice(0, dot);
+
+  try {
+    const session = JSON.parse(
+      Buffer.from(payload, "base64url").toString("utf8")
+    );
+
+    return session.expiresAt;
+  } catch {
+    return null;
+  }
+}
+
 // ---------- LOGIN RATE LIMITING ----------
 const attempts = new Map();
 const WINDOW_MS = 10 * 60 * 1000;
@@ -272,10 +291,16 @@ app.get("/healthz", (_req, res) => {
   res.type("text").send("ok");
 });
 
-// The frontend polls this endpoint to detect expired sessions.
+// Session timer endpoint used by the settings menu.
 app.get("/session-status", (req, res) => {
   res.set("Cache-Control", "no-store");
-  res.json({ authenticated: isAuthed(req) });
+
+  const expiresAt = getSessionExpiry(req);
+
+  res.json({
+    authenticated: expiresAt !== null,
+    expiresAt
+  });
 });
 
 app.post(
@@ -400,3 +425,4 @@ function shutdown() {
 
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
+
