@@ -727,4 +727,54 @@
   renderLinks();
   newTab();
   boot().catch(() => {});
-})();
+  // ---------- ABOUT:BLANK BUTTON ----------
+  const blankButton = document.createElement("button");
+  blankButton.id = "blank";
+  blankButton.title = "Open Emnity in about:blank";
+  blankButton.setAttribute("aria-label", "Open Emnity in about:blank");
+  blankButton.textContent = "↗";
+
+  // Place between the Ready status box and Settings button.
+  $("status").insertAdjacentElement("afterend", blankButton);
+
+  blankButton.addEventListener("click", () => {
+    const blankWindow = window.open("about:blank", "_blank");
+
+    if (!blankWindow) {
+      showBanner(
+        "Pop-up blocked.",
+        "Allow pop-ups for this site, then try again."
+      );
+      return;
+    }
+
+    try {
+      blankWindow.opener = null;
+
+      const doc = blankWindow.document;
+      doc.title = "Emnity";
+      doc.documentElement.style.cssText = "height:100%;margin:0";
+      doc.body.style.cssText =
+        "height:100%;margin:0;overflow:hidden;background:#fff";
+
+      const frame = doc.createElement("iframe");
+      frame.title = "Emnity";
+      frame.src = window.location.href;
+      frame.style.cssText =
+        "position:fixed;inset:0;width:100%;height:100%;border:0;background:#fff";
+
+      frame.setAttribute(
+        "allow",
+        "autoplay; fullscreen; clipboard-write; encrypted-media; picture-in-picture; web-share"
+      );
+      frame.setAttribute("allowfullscreen", "");
+
+      doc.body.replaceChildren(frame);
+    } catch {
+      blankWindow.close();
+      showBanner(
+        "Couldn't open the new tab.",
+        "Your browser prevented the new tab from being set up."
+      );
+    }
+  });})();
