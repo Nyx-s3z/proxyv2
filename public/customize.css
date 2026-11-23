@@ -768,3 +768,13 @@ button:hover {
     width: 65px;
   }
 }
+/* Improve address bar readability in every theme */
+#addr {
+  color: #333333 !important;
+  caret-color: #333333 !important;
+}
+
+#addr::placeholder {
+  color: #777777 !important;
+  opacity: 1;
+}
