@@ -690,6 +690,22 @@
     location.reload();
   });
 
+  // ---------- TAB LAYOUT SETTINGS ----------
+  const tabLayoutSelect = $("set-tab-layout");
+
+  tabLayoutSelect.value = settings.tabLayout;
+
+  tabLayoutSelect.addEventListener("change", () => {
+    const layout = tabLayoutSelect.value;
+
+    if (!["horizontal", "vertical"].includes(layout)) return;
+
+    settings.tabLayout = layout;
+    document.body.dataset.tabLayout = layout;
+
+    store.set("emn_settings", settings);
+  });
+
   $("gear").addEventListener("click", () => $("settings").showModal());
 
   $("reset-links").addEventListener("click", () => {
