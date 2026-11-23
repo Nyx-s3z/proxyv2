@@ -169,3 +169,109 @@ dialog h2 { margin: 0 0 4px; color: var(--green-dark); }
   #toolbar button { width: 30px; }
   #eng { max-width: 105px; padding: 0 8px; }
 }
+/* =========================================
+   VERTICAL TAB LAYOUT
+   ========================================= */
+
+body[data-tab-layout="vertical"] {
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  height: 100%;
+}
+
+/* Sidebar */
+body[data-tab-layout="vertical"] #tabbar {
+  grid-column: 1;
+  grid-row: 1 / 5;
+  height: auto;
+  min-height: 0;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 12px 9px;
+  gap: 9px;
+  border-bottom: 0;
+  border-right: 3px solid var(--red);
+}
+
+/* Brand */
+body[data-tab-layout="vertical"] #brand {
+  padding: 7px 8px 12px;
+  border-bottom: 1px solid #ffffff30;
+}
+
+/* Tab list */
+body[data-tab-layout="vertical"] #tabs {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-x: hidden;
+  overflow-y: auto;
+  gap: 6px;
+}
+
+/* Individual tabs */
+body[data-tab-layout="vertical"] .tab {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  flex: none;
+  height: 42px;
+  border-radius: 9px;
+  padding: 0 10px;
+  border-top: 0;
+  border-left: 3px solid transparent;
+}
+
+body[data-tab-layout="vertical"] .tab.on {
+  border-left-color: var(--red);
+}
+
+/* New tab button */
+body[data-tab-layout="vertical"] #plus {
+  width: 100%;
+  flex: none;
+  background: #ffffff12;
+}
+
+/* Main browser area */
+body[data-tab-layout="vertical"] #toolbar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+body[data-tab-layout="vertical"] #bookmarks {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+body[data-tab-layout="vertical"] #load {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+body[data-tab-layout="vertical"] #views {
+  grid-column: 2;
+  grid-row: 4;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Keep the vertical layout usable on smaller screens */
+@media (max-width: 640px) {
+  body[data-tab-layout="vertical"] {
+    grid-template-columns: 145px minmax(0, 1fr);
+  }
+
+  body[data-tab-layout="vertical"] #brand {
+    font-size: 12px;
+    padding-left: 3px;
+  }
+
+  body[data-tab-layout="vertical"] .tab {
+    font-size: 11px;
+    gap: 5px;
+  }
+}
