@@ -89,9 +89,19 @@
   ];
 
   const settings = Object.assign(
-    { engine: "google", transport: "epoxy" },
+    {
+      engine: "google",
+      transport: "epoxy",
+      tabLayout: "horizontal"
+    },
     store.get("emn_settings", {})
   );
+
+  if (!["horizontal", "vertical"].includes(settings.tabLayout)) {
+    settings.tabLayout = "horizontal";
+  }
+
+  document.body.dataset.tabLayout = settings.tabLayout;
 
   if (!ENGINES[settings.engine]) settings.engine = "google";
   if (settings.transport !== "libcurl") settings.transport = "epoxy";
